@@ -34,6 +34,7 @@ def main():
         'blood_glucose_level': blood_glucose_level
     }
 
+    
     result = predict_diabetes(user_input)
     print(f"\n🧾 예측된 당뇨병 발병 확률: {result * 100:.2f}%")
 
