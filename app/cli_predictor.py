@@ -18,7 +18,7 @@ def main():
     age = get_input("나이: ", int)
     hypertension = get_input("고혈압 유무 (0: 없음, 1: 있음): ", int)
     heart_disease = get_input("심장병 유무 (0: 없음, 1: 있음): ", int)
-    smoking_history = get_input("흡연 수준 (0: 비흡연 ~ 5: 매일 2갑 이상): ", int)
+    smoking_history = get_input("흡연 척도 (0: 비흡연, 1: 5년 이상 금연, 2: 흡연 중  3: 5년 이내 금연): ", int)
     bmi = get_input("BMI 지수: ", float)
     hba1c_level = get_input("헤모글로빈 A1c 수치: ", float)
     blood_glucose_level = get_input("혈당 수치: ", float)
