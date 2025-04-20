@@ -1,0 +1,76 @@
+<!-- 예측 결과 출력 화면 -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>예측 결과</title>
+
+  <style>
+    body {
+      font-family: '맑은 고딕', sans-serif;
+      background-color: #f9f9f9;
+      text-align: center;
+      padding: 80px;
+    }
+
+    h2 {
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+
+    .result-box {
+      background-color: #ffffff;
+      padding: 30px;
+      margin: 0 auto;
+      display: inline-block;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    .result-box p {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+
+    .risk-score {
+      font-size: 2em;
+      font-weight: bold;
+      color: #E53935;
+      margin: 20px 0;
+    }
+
+    .suggestion {
+      font-size: 0.95em;
+      color: #555;
+      margin-top: 25px;
+    }
+
+    .back-button {
+      margin-top: 30px;
+      text-decoration: none;
+      padding: 8px 16px;
+      background-color: #4CAF50;
+      color: white;
+      border-radius: 4px;
+    }
+
+    .back-button:hover {
+      background-color: #388E3C;
+    }
+  </style>
+</head>
+<body>
+  <h2>📊 예측 결과</h2>
+  <p>예측된 당뇨병 발병 확률은 <strong>{{ result*100 | round(2) }}%</strong>입니다.</p>
+
+  {% if result >= 0.7 %}
+    <p>⚠️ 고위험군입니다. 가까운 병원에 방문하시는 것을 권장합니다.</p>
+  {% elif result >= 0.4 %}
+    <p>🩺 주의가 필요합니다. 건강관리 습관 개선이 필요합니다.</p>
+  {% else %}
+    <p>✅ 현재는 낮은 위험도입니다.</p>
+  {% endif %}
+
+  <a href="/">← 처음으로</a>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!-- 질병 선택 화면 -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>질병 예측 시스템</title>
+
+    <style>
+        body {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          background-color: #f8f9fa;
+          font-family: 'Segoe UI', sans-serif;
+          flex-direction: column;
+          text-align: center;
+        }
+      
+        .disease-list {
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
+          margin-bottom: 20px;
+        }
+      
+        .disease-item {
+          display: flex;
+          justify-content: space-between;
+          width: 200px;
+          margin: 0 auto;
+        }
+      
+        button {
+          padding: 5px 12px;
+          background-color: #007bff;
+          border: none;
+          border-radius: 6px;
+          color: white;
+          font-weight: bold;
+          cursor: pointer;
+        }
+      
+        button:hover {
+          background-color: #0056b3;
+        }
+      
+        label {
+          font-weight: 500;
+          font-size: 16px;
+        }
+      
+        p {
+          font-size: 14px;
+          color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h2>질병 예측 시스템</h2>
+    <div class="disease-list">
+    <form action="/form/diabetes" method="get">
+        <div class="disease-item">
+        <label>당뇨</label>
+        <button type="submit">선택</button>
+        </div>
+    </form>
+
+    <form action="/form/heart" method="get">
+        <div class="disease-item">
+        <label>심장병</label>
+        <button type="submit">선택</button>
+        </div>
+    </form>
+
+    <form action="/form/stroke" method="get">
+        <div class="disease-item">
+        <label>뇌졸중</label>
+        <button type="submit">선택</button>
+        </div>
+    </form>
+
+    <form action="/form/hypertension" method="get">
+        <div class="disease-item">
+        <label>고혈압</label>
+        <button type="submit">선택</button>
+        </div>
+    </form>
+    </div>
+    <p>예측하고자 하는 질병을 선택해 주세요.</p>
+</body>
+</html>

@@ -27,16 +27,41 @@ def predict_diabetes(user_input: dict):
     """
     model = load_model()
 
-    # 입력 데이터를 DataFrame으로 변환
+    # 기본 입력을 DataFrame으로 변환
     input_df = pd.DataFrame([user_input])
 
-    # smoking_history 컬럼 One-hot 인코딩 (0~5)
-    for i in range(6):
+    # smoking_history One-hot 인코딩
+    for i in range(4):
         col = f"smoking_history_{i}"
         input_df[col] = 1 if user_input['smoking_history'] == i else 0
+    # 누락된 컬럼은 0으로 채움
+    input_df['smoking_history_4'] = 0
+    input_df['smoking_history_5'] = 0
 
-    input_df = input_df.drop(columns=['smoking_history'])
+    # gender One-hot 인코딩
+    gender = user_input['gender']
+    input_df['gender_Female'] = 1 if gender == 0 else 0
+    input_df['gender_Male'] = 1 if gender == 1 else 0
+    input_df['gender_Other'] = 0  # 기타 선택 없음
 
+    # 수치형 컬럼 추가
+    input_df['heart_disease'] = user_input.get('heart_disease', 0)
+    input_df['blood_glucose_level'] = user_input.get('blood_glucose_level', 0)
+
+    # 불필요한 컬럼 제거
+    input_df = input_df.drop(columns=['smoking_history', 'gender'])
+
+    # 최종 컬럼 순서 맞추기
+    required_columns = [
+        'age', 'bmi', 'HbA1c_level', 'hypertension', 'alcohol_history',
+        'gender_Female', 'gender_Male', 'gender_Other',
+        'heart_disease', 'blood_glucose_level',
+        'smoking_history_0', 'smoking_history_1', 'smoking_history_2',
+        'smoking_history_3', 'smoking_history_4', 'smoking_history_5'
+    ]
+
+    input_df = input_df.reindex(columns=required_columns, fill_value=0)
+    
     # 예측
     probability = model.predict_proba(input_df)[0][1]
     return probability

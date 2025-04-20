@@ -29,29 +29,29 @@ def preprocess_diabetes_dataset(csv_path: str):
         'current': 2,
         'ever': 3,
         'not current': 3,   # 맥락상 의미가 유사한 'ever'와 통합합
-        'No Info': 5
+        'No Info': 5        # 전체 데이터 중 35% 정도가 No Info로 작성되어 있어 drop 하지 않고 안 쓰는 번호인 5번으로 분류
     }
+    # 기존 숫자 인코딩
     df['smoking_history'] = df['smoking_history'].map(mapping)
 
     # 타겟/피처 분리
     y = df['diabetes']
     X = df.drop(columns=['diabetes'])
 
-    # One-hot 인코딩 (smoking_history만)
-    cat_cols = ['smoking_history']
-    encoder = OneHotEncoder(sparse=False, handle_unknown='ignore')
-    encoded = encoder.fit_transform(X[cat_cols]).toarray()  # ⬅ 핵심
+    # One-hot 인코딩
+    # 🔄 모든 object형 (문자열) 열을 자동 탐지해서 인코딩
+    cat_cols = X.select_dtypes(include='object').columns
+
+    # One-hot 인코딩 수행
+    try:
+        encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
+    except TypeError:
+        encoder = OneHotEncoder(sparse=False, handle_unknown='ignore')
+
+    encoded = encoder.fit_transform(X[cat_cols])
     encoded_df = pd.DataFrame(encoded, columns=encoder.get_feature_names_out(cat_cols))
     encoded_df.reset_index(drop=True, inplace=True)
 
-    # 수치형 피처만 따로 뽑기 + 병합
+    # 수치형 피처만 남기기
     numeric_X = X.drop(columns=cat_cols).reset_index(drop=True)
     X_processed = pd.concat([numeric_X, encoded_df], axis=1)
-
-    # 결측값 제거
-    X_processed.replace([np.inf, -np.inf], np.nan, inplace=True)
-    X_processed.dropna(inplace=True)
-    y = y[X_processed.index]
-
-    # 데이터 분할
-    return train_test_split(X_processed, y, test_size=0.2, random_state=42)
