@@ -23,7 +23,7 @@ def predict_diabetes(user_input: dict) -> float:
     if user_input.get('smoking_history') not in valid_smoking:
         user_input['smoking_history'] = 'never'
 
-    # 강제로 문자열 변환
+    # 강제로 문자열 변환 수정
     user_input['gender'] = str(user_input['gender'])
     user_input['smoking_history'] = str(user_input['smoking_history'])
 
@@ -37,6 +37,7 @@ def predict_diabetes(user_input: dict) -> float:
     numeric_df = df.drop(columns=cat_cols).reset_index(drop=True)
     input_df = pd.concat([numeric_df, encoded_df], axis=1)
     input_df = input_df.reindex(columns=feature_names, fill_value=0)
+
 
     probability = model.predict_proba(input_df)[0][1]
     return probability
