@@ -44,4 +44,3 @@ if st.button("📊 예측 실행"):
 
 # 실행코드
 # streamlit run app/diabetes_app/streamlit/app_streamlit.py
-
