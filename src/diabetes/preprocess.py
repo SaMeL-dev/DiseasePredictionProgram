@@ -32,7 +32,7 @@ def preprocess_diabetes_dataset(csv_path: str):
         'No Info': 5        # 전체 데이터 중 35% 정도가 No Info로 작성되어 있어 drop 하지 않고 안 쓰는 번호인 5번으로 분류
     }
     # 기존 숫자 인코딩
-    df['smoking_history'] = df['smoking_history'].map(mapping)
+    #df['smoking_history'] = df['smoking_history'].map(mapping)
 
     # 타겟/피처 분리
     y = df['diabetes']
@@ -55,3 +55,9 @@ def preprocess_diabetes_dataset(csv_path: str):
     # 수치형 피처만 남기기
     numeric_X = X.drop(columns=cat_cols).reset_index(drop=True)
     X_processed = pd.concat([numeric_X, encoded_df], axis=1)
+
+    X_train, X_test, y_train, y_test = train_test_split(
+    X_processed, y, test_size=0.2, random_state=42)
+
+    return X_train, X_test, y_train, y_test, encoder, X_processed.columns.tolist()
+
