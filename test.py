@@ -26,3 +26,5 @@ missing_rate = missing_count / total * 100
 print("\n🚬 smoking_history 값별 개수:")
 print(count_per_label)
 print(f"\n❓ 'No Info'(5번) 비율: {missing_rate:.2f}%")
+
+# 깃 연동 테스트 2
