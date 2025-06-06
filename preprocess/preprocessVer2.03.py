@@ -56,8 +56,8 @@ def yesno01(df):
         'INSULIN', 'DIABEYE', 'CIMEMLOS',
         '_RFHLTH', '_HCVU651', '_CHOLCHK',
         '_DRDXAR1', '_HISPANC', '_RACEG21', '_PASTAE1',
-        '_FLSHOT6', '_PNEUMO2', '_AIDTST3',
-        '_RFDRHV5', '_FRTLT1', '_VEGLT1', 'PREGNANT',
+        '_FLSHOT6', '_PNEUMO2', '_AIDTST3'
+        , '_FRTLT1', '_VEGLT1', 'PREGNANT',
         'EXERANY2', '_MICHD', 'DRNKANY5', '_PAINDX1', '_PASTRNG'
     ]
 
@@ -134,7 +134,6 @@ def yesno04(df):
     return df
 '''
 # 1,2,4 = 'Yes', 3 = 'No', 7,9 = 'Unknown', 빈칸 = null
-#전처리 필요 X
 def yesno05(df):
     cols = ['BPHIGH4', 'DIABETE3']
 
@@ -157,7 +156,7 @@ def yesno05(df):
 
 # 1 = 'No', 2 = 'Yes', 7,9 = 'Unknown', 빈칸 = null
 def yesno06(df):
-    cols = ['_RFCHOL', '_LTASTH1', '_CASTHM1', '_RFBING5', '_FRUITEX', '_VEGETEX']
+    cols = ['_RFCHOL', '_LTASTH1', '_CASTHM1', '_RFBING5', '_FRUITEX', '_VEGETEX','_RFDRHV5']
 
     def convert(value):
         if value == 1:
