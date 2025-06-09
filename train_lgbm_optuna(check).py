@@ -6,85 +6,50 @@ from lightgbm import LGBMClassifier
 from sklearn.metrics import accuracy_score, classification_report
 
 def main():
-    # ────────────────────────────────────────────────────────────────────
     # 1) CSV 로드 & NaN/비이진(0,1) 제거
-    # ────────────────────────────────────────────────────────────────────
     df = pd.read_csv('BRFSS_2015ver14.csv', low_memory=False)
-
     target_cols = ['BPHIGH4', 'CVDCRHD4', 'CVDSTRK3', 'CHCKIDNY', 'DIABETE3']
-    # 타깃에 NaN 있거나 0,1 이외의 값이면 제거
     df = df.dropna(subset=target_cols)
     for col in target_cols:
         df = df[df[col].isin([0, 1])]
 
-    # ────────────────────────────────────────────────────────────────────
     # 2) 피처/타깃 분리
-    # ────────────────────────────────────────────────────────────────────
     feature_cols = [c for c in df.columns if c not in target_cols]
     X = df[feature_cols].copy()
     y = df[target_cols].astype(int)
 
-    # ────────────────────────────────────────────────────────────────────
     # 3) 문자열(범주형) 컬럼 → OrdinalEncoder로 정수 인코딩
-    # ────────────────────────────────────────────────────────────────────
     obj_cols = X.select_dtypes(include=['object']).columns.tolist()
     encoder = None
     if obj_cols:
-        encoder = OrdinalEncoder(
-            handle_unknown='use_encoded_value',
-            unknown_value=-1
-        )
+        encoder = OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=-1)
         X[obj_cols] = encoder.fit_transform(X[obj_cols])
 
-    # (필요 시) 숫자형 피처 NaN을 -1로 채우려면 아래 주석 해제
-    # X = X.fillna(-1)
-
-    # ────────────────────────────────────────────────────────────────────
-    # 4) Train/Test 분할 (80:20), stratify=y['BPHIGH4'] (대표 타깃 하나)
-    # ────────────────────────────────────────────────────────────────────
+    # 4) Train/Test 분할
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y,
-        test_size=0.2,
-        random_state=42,
-        stratify=y['BPHIGH4']
+        X, y, test_size=0.2, random_state=42, stratify=y['BPHIGH4']
     )
 
-    # ────────────────────────────────────────────────────────────────────
-    # 5) 분할 결과 출력
-    # ────────────────────────────────────────────────────────────────────
+    # 5) 학습 및 평가
     print(f"훈련 데이터셋 크기: {X_train.shape}")
     print(f"테스트 데이터셋 크기: {X_test.shape}\n")
-
-    # ────────────────────────────────────────────────────────────────────
-    # 6) 모델 학습
-    # ────────────────────────────────────────────────────────────────────
     base = LGBMClassifier(objective='binary', random_state=42)
     model = MultiOutputClassifier(base, n_jobs=-1)
     model.fit(X_train, y_train)
-
-    # ────────────────────────────────────────────────────────────────────
-    # 7) 예측 & 평가 (테스트셋)
-    # ────────────────────────────────────────────────────────────────────
     y_pred = model.predict(X_test)
     print("=== 최종 테스트 성능 ===")
     for idx, col in enumerate(target_cols):
         acc = accuracy_score(y_test.iloc[:, idx], y_pred[:, idx])
         print(f"\n[{col}] 정확도: {acc:.4f}")
         print(classification_report(
-            y_test.iloc[:, idx],
-            y_pred[:, idx],
-            target_names=['음성(0)', '양성(1)'],
-            digits=4
+            y_test.iloc[:, idx], y_pred[:, idx], target_names=['음성(0)', '양성(1)'], digits=4
         ))
 
-    # ────────────────────────────────────────────────────────────────────
-    # 8) 사용자 입력 단계: 모든 컬럼 이름과 설명을 한꺼번에 출력
-    # ────────────────────────────────────────────────────────────────────
-    print("\n\n--- 사용자 입력으로 단일 샘플 예측 ---\n")
-    print("총 피처 수:", len(feature_cols))
-    print("아래는 모든 피처의 이름과 설명입니다. 순서대로 입력해 주세요.\n")
+    # 6) 사용자 입력
+    print("\n\n--- 사용자 입력 예측 ---\n")
+    print(f"총 피처 수: {len(feature_cols)}\n")
 
-    # (A) 가능한 “한글 설명”을 담아둔 딕셔너리
+    # A) 설명용 딕셔너리
     feature_desc = {
         'GENHLTH':   "전반적인 건강 상태에 대한 자가 평가 (예: 1: 'Excellent', 2: 'VeryGood', 3: 'Good', 4: 'Fair', 5: 'Poor', 7/9='null')",
         'PHYSHLTH':  "지난 30일간 신체 건강이 좋지 않았던 일수 (예: 1~30 사이 정수, 88=Zero, 77/99=Unknown)",
@@ -100,7 +65,7 @@ def main():
         'TOLDHI2':   "보건 전문가로부터 혈중 콜레스테롤 수치가 높다고 들은 적이 있는가? (예: 빈칸=null, 1=yes, 2=no, 7/9=Unknown)",
         'CVDINFR4':  "보건 전문가로부터 심근경색(심장마비)을 진단받은 적이 있는가? (예: 빈칸=null, 1=yes, 2=no, 7/9=Unknown)",
         'ASTHMA3':   "보건 전문가로부터 천식 진단을 받은 적이 있는가? (예: 빈칸=null, 1=yes, 2=no, 7/9=Unknown)",
-        'ASTHnoW':   "현재 천식이 있는지 여부 (예: 빈칸=null, 1=yes, 2=no, 7/9=Unknown)",
+        'ASTHNOW':   "현재 천식이 있는지 여부 (예: 빈칸=null, 1=yes, 2=no, 7/9=Unknown)",
         'CHCSCNCR':  "보건 전문가로부터 피부암(스킨 캔서) 진단을 받은 적이 있는가? (예: 빈칸=null, 1=yes, 2=no, 7/9=Unknown)",
         'CHCOCNCR':  "보건 전문가로부터 피부암을 제외한 다른 암을 진단받은 적이 있는가? (예: 빈칸=null, 1=yes, 2=no, 7/9=Unknown)",
         'CHCCOPD1':  "보건 전문가로부터 COPD, 폐기종, 기관지염 등 진단을 받은 적이 있는가? (예: 빈칸=null, 1=yes, 2=no, 7/9=Unknown)",
@@ -122,7 +87,7 @@ def main():
         'SMOKE100':  "생애 동안 담배 100개비 이상 흡연 여부 (예: 빈칸=null, 1=yes, 2=no, 7/9=Unknown)",
         'STOPSMK2':  "지난 12개월 금연 시도 여부 (예: 빈칸=null, 1=yes, 2=no, 7/9=Unknown)",
         'LASTSMK2':  "마지막 흡연 시기 (예: 1=Within1M, 2=Within3M, 3=Within6M, 4=Within1Y, 5=Within10Y, 7=Y10plus, 8=Never, 9/99=Unknown, 빈칸=null)",
-        'USEnoW3':   "현재 씹는 담배/스너프/스누스 사용 여부 (예: 1=Daily, 2=Some, 3=Never, 7/9=Unknown, BLANK=null)",
+        'USENOW3':   "현재 씹는 담배/스너프/스누스 사용 여부 (예: 1=Daily, 2=Some, 3=Never, 7/9=Unknown, BLANK=null)",
         'LMTJOIN3':  "현재 관절염/관절 증상으로 활동 제한 여부 (예: 빈칸=null, 1=yes, 2=no, 7/9=Unknown)",
         'ARTHDIS2':  "관절염/관절 증상이 취업/업무에 미치는 영향 여부 (예: 빈칸=null, 1=yes, 2=no, 7/9=Unknown)",
         'ARTHSOCL':  "지난 30일 관절염/관절 증상으로 쇼핑/영화/종교/사교 활동에 방해 정도 (예: 1=High, 2=Moderate, 3=no, 7/9=Unknown, 빈칸=null)",
@@ -235,95 +200,87 @@ def main():
         '_AGEG5YR':  "나이 5세 단위 그룹 (예: 1=18–24, 2=25–29, 3=30–34, 4=35–39, 5=40–44, 6=45–49, 7=50–54, 8=55–59, 9=60–64, 10=65–69, 11=70–74, 12=75–79, 13=80+)"
     }
 
-    # (B) 숫자형 피처 최소/최대/예시값 계산
+    # B) 범주형 숫자->문자 매핑
+    category_maps = {
+        'GENHLTH': {1:'Excellent',2:'VeryGood',3:'Good',4:'Fair',5:'Poor',7:'Unknown',9:'Unknown'},
+        # 필요시 추가
+    }
+
+    # C) 특수값 매핑 규칙
+    special_value_maps = {
+        'PHYSHLTH': {88:0,77:-1,99:-1},
+        'MENTHLTH': {88:0,77:-1,99:-1},
+        'POORHLTH': {88:0,77:-1,99:-1},
+        # 예: _PA300R2 은 lambda로 처리
+        '_PA300R2': lambda x: 1 if x>=300 else 2 if x>=1 else 3 if x==0 else -1
+        # 나머지 숫자형 컬럼은 필요 시 dict 추가
+    }
+
+    # 범주형 카테고리 정보
+    categorical_info = {}
+    if obj_cols and encoder is not None:
+        for idx, col in enumerate(obj_cols):
+            categorical_info[col] = list(encoder.categories_[idx])
+
+    # 숫자형 범위/예시 정보
     numeric_info = {}
     for col in feature_cols:
         if col not in obj_cols:
             col_num = pd.to_numeric(df[col], errors='coerce')
             if col_num.notna().any():
-                min_val = col_num.min()
-                max_val = col_num.max()
-                example = int((min_val + max_val) / 2)
-                numeric_info[col] = (min_val, max_val, example)
+                numeric_info[col] = (int(col_num.min()), int(col_num.max()), int((col_num.min()+col_num.max())/2))
             else:
-                numeric_info[col] = (None, None, None)
+                numeric_info[col] = (None,None,None)
 
-    # (C) 범주형 피처의 카테고리 목록 수집
-    categorical_info = {}
-    if obj_cols and encoder is not None:
-        for idx, col in enumerate(obj_cols):
-            cats = list(encoder.categories_[idx])
-            categorical_info[col] = cats
-
-    # ────────────────────────────────────────────────────────────────────
+    # 입력 루프
+        # ────────────────────────────────────────────────────────────────────
     # 9) 사용자 입력 루프: “모든 컬럼”과 “설명”을 출력한 뒤, 값을 차례대로 입력받음
     # ────────────────────────────────────────────────────────────────────
     new_data = {}
     for col in feature_cols:
         desc = feature_desc.get(col, "설명 없음('BRFSS 2015 CodeBook' 참조)")
-
+        # 범주형 컬럼
         if col in obj_cols:
-            cats = categorical_info.get(col, [])
-            example_cats = cats[:5]
-            prompt = (
-                f"  - [{col}] {desc}\n"
-                f"      가능한 카테고리 예시: {example_cats} … 총 {len(cats)}개\n"
-                f"      (문자열 그대로 입력, 예: '{example_cats[0] if example_cats else '값'}')\n"
-                f"      → "
-            )
+            # 예시나 카테고리 목록을 제거하고, 설명만 표시합니다.
+            prompt = f"- [{col}] {desc}\n  → "
             val = input(prompt)
             new_data[col] = val
+        # 숫자형 컬럼
         else:
-            min_val, max_val, example = numeric_info.get(col, (None, None, None))
-            if min_val is not None:
-                prompt = (
-                    f"  - [{col}] {desc}\n"
-                    f"      범위: [{int(min_val)}, {int(max_val)}], 예시값: {example}\n"
-                    f"      (숫자만 입력)\n"
-                    f"      → "
-                )
-            else:
-                prompt = (
-                    f"  - [{col}] {desc}\n"
-                    f"      (유효한 숫자 정보 없음, 건너뛰려면 Enter)\n"
-                    f"      → "
-                )
+            # 범위나 예시값 출력 없이 설명만 표시합니다.
+            prompt = f"- [{col}] {desc}\n  → "
             val = input(prompt)
-            new_data[col] = val
+            # 숫자 변환 로직 그대로 유지
+            try:
+                num = int(val)
+            except:
+                num = -1
+            # 특수값 매핑이 필요한 경우 적용
+            if col in special_value_maps:
+                rule = special_value_maps[col]
+                num = rule(num) if callable(rule) else rule.get(num, num)
+            new_data[col] = num
 
-    # ────────────────────────────────────────────────────────────────────
-    # 10) 입력값 DataFrame으로 변환 & 전처리
-    # ────────────────────────────────────────────────────────────────────
+
+    # DataFrame 변환
     new_df = pd.DataFrame([new_data])
-
-    # (1) 범주형 인코딩
     if obj_cols and encoder is not None:
         new_df[obj_cols] = encoder.transform(new_df[obj_cols])
-
-    # (2) 숫자형 변환
     for col in feature_cols:
         if col not in obj_cols:
             try:
                 new_df[col] = pd.to_numeric(new_df[col])
             except:
                 new_df[col] = pd.NA
-
-    # (3) NaN 발생 시 -1로 채움
-    if new_df.isna().any(axis=None):
+    if new_df.isna().any().any():
         new_df = new_df.fillna(-1)
 
-    # ────────────────────────────────────────────────────────────────────
-    # 11) predict_proba로 “양성 확률” 계산 → 출력
-    # ────────────────────────────────────────────────────────────────────
+    # 예측 및 결과 출력
     probas_list = model.predict_proba(new_df)
-    print("\n=== 사용자 입력 샘플 예측 결과(확률) ===")
+    print("\n=== 예측 결과 ===")
     for idx, col in enumerate(target_cols):
-        probas = probas_list[idx][0]
-        prob_positive = probas[1]
-        prob_negative = probas[0]
-        print(f"  - [{col}] 양성 확률: {prob_positive * 100:.2f}%  (음성 확률: {prob_negative * 100:.2f}%)")
+        p = probas_list[idx][0][1] * 100
+        print(f"[{col}] 양성 확률: {p:.2f}%")
 
-    print("\n예측이 완료되었습니다.")
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
