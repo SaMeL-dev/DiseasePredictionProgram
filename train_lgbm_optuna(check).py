@@ -53,10 +53,9 @@ def main():
     feature_desc = {
         'GENHLTH':   "전반적인 건강 상태에 대한 자가 평가 (예: 1: 'Excellent', 2: 'VeryGood', 3: 'Good', 4: 'Fair', 5: 'Poor', 7/9='null')",
         'PHYSHLTH':  "지난 30일간 신체 건강이 좋지 않았던 일수 (예: 1~30 사이 정수, 88=Zero, 77/99=UnkNown)",
-        'MENTHLTH':  "지난 30일간 정신 건강(스트레스, 우울, 감정 문제 포함)이 좋지 않았던 일수 (예: 1~30 사이 정수, 88=Zero, 77/99=UnkNown)",
-        'POORHLTH':  "지난 30일 동안 신체적 또는 정신적 건강 문제로 평소 하던 활동을 하지 못한 일수 (예: 1~30 사이 정수, 88=Zero, 77/99=UnkNown)",
+        'MENTHLTH':  "지난 30일간 정신 건강(스트레스, 우울, 감정 문제 포함s던 활동을 하지 못한 일수 (예: 1~30 사이 정수, 88=Zero, 77/99=UnkNown)",
         'HLTHPLN1':  "건강 보험, HMO(선불 건강관리), Medicare, 인디언 보건 서비스 등 어떤 형태의 건강 보장 제도를 갖고 있는가? (예: 빈칸=null, 1=Yes, 2=No, 7/9=UnkNown)",
-        'PERSDOC2':  "개인 주치의 또는 건강관리 제공자가 있다고 생각하는지 여부 (예: 1=Yes, 2=No, 7/9=UnkNown)",
+        'PERSDOC2':  "개인 주치의 또는 건강관리 제공자가 있다고 생각하는지 여부 (예: 1=Yesone, 2=Morethan, 3=No 7/9=UnkNown)",
         'MEDCOST':   "지난 12개월 동안 비용 문제로 의사의 진료를 받지 못한 적이 있는지 여부 (예: 빈칸=null, 1=Yes, 2=No, 7/9=UnkNown)",
         'CHECKUP1':  "마지막으로 정기 건강검진을 받은 시점은 언제인가? (예: 1=Within1Y, 2=Within2Y, 3=Within5Y, 4=Over5Y, 8=Never, 7/9=UnkNown; 빈칸=null)",
         'BPMEDS':    "현재 고혈압 약을 복용 중인지 여부 (예: 빈칸=null, 1=Yes, 2=No, 7/9=UnkNown)",
