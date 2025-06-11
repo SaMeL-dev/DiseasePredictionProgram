@@ -242,7 +242,6 @@ def main():
     'USENOW3': {1: 'Daily', 2: 'Some', 3: 'Never', 7: 'Unknown', 9: 'Unknown'},
     'LMTJOIN3': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
     'ARTHDIS2': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
-    'ARTHDIS2': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
     'ARTHSOCL': {1: 'High', 2: 'Moderate', 3: 'No', 7: 'Unknown', 9: 'Unknown'},
     'JOINPAIN': {**{i: str(i) for i in range(0, 11)}, 77: 'Unknown', 99: 'Unknown'},
     'FLUSHOT6': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
