@@ -614,7 +614,7 @@ def Integer_conversion11(df):
 
 '''
 # 0–99999 = str형으로 변환, BLANK = null
-#전처리 필요 X
+#전처리 필요 X.
 def Integer_conversion12(df):
     cols = ['_MINAC11', '_MINAC21', 'PAMIN11_', 'PAMIN21_', 'PAVIG11_', 'PAVIG21_']
 
