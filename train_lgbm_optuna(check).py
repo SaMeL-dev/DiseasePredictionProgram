@@ -28,7 +28,7 @@ def main():
 
     # 4) Train/Test 분할
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42, stratify=y['BPHIGH4']
+        X, y, test_size=0.4, random_state=42, stratify=y['BPHIGH4']
     )
 
     # 5) 학습 및 평가
@@ -56,6 +56,7 @@ def main():
         'PHYSHLTH':  "지난 30일간 신체 건강이 좋지 않았던 일수 (예: 1~30 사이 정수, 88=Zero, 77/99=UnkNown)",
         'MENTHLTH':  "지난 30일간 정신 건강(스트레스, 우울, 감정 문제 포함s던 활동을 하지 못한 일수 (예: 1~30 사이 정수, 88=Zero, 77/99=UnkNown)",
         'POORHLTH': "지난 30일 동안 신체적 또는 정신적 건강 문제로 평소 하던 활동 (자가관리, 업무, 여가 등)을 하지 못한 일수 (예: 1~30=일수, 88=None, 77 = Don't Know, 99 = 거부, Blank = Not asked or Missing)",
+        'POORHLTH': "지난 30일 동안 신체적 또는 정신적 건강 문제로 평소 하던 활동 (자가관리, 업무, 여가 등)을 하지 못한 일수 (예: 1~30=일수, 88=Zero, 77/99 = Unknown)",
         'HLTHPLN1':  "건강 보험, HMO(선불 건강관리), Medicare, 인디언 보건 서비스 등 어떤 형태의 건강 보장 제도를 갖고 있는가? (예: 빈칸=null, 1=Yes, 2=No, 7/9=UnkNown)",
         'PERSDOC2':  "개인 주치의 또는 건강관리 제공자가 있다고 생각하는지 여부 (예: 1=Yesone, 2=Morethan, 3=No, 7/9=UnkNown)",
         'MEDCOST':   "지난 12개월 동안 비용 문제로 의사의 진료를 받지 못한 적이 있는지 여부 (예: 빈칸=null, 1=Yes, 2=No, 7/9=UnkNown)",
@@ -105,6 +106,7 @@ def main():
         'FEETCHK2':  "발 상태 확인 빈도 (예: 월간횟수, 777/999=UnkNown, 888=Zero, 빈칸=null)",
         'DOCTDIAB':  "지난 12개월 당뇨병 진료 횟수 (예: 1~76 직접 입력, 88=Zero, 77/99=UnkNown, 빈칸=null)",
         'CHKHEMO3':  "수최근 12개월당화혈색소(A1C) 검사 횟수 (예: 1~76 직접 입력, 88=한 번도 없음, 98=모름, 빈칸=null)",
+        'CHKHEMO3':  "수최근 12개월당화혈색소(A1C) 검사 횟수 (예: 1~76 직접 입력, 88=한 번도 없음, 77/98/99=모름, 빈칸=null)",
         'FEETCHK':   "지난 12개월 발 검사 횟수 (예: 1~76 직접 입력, 88=Zero, 77/99=UnkNown, 빈칸=null)",
         'DIABEYE':   "당뇨 합병증(망막병증) 여부 (예: 빈칸=null, 1=Yes, 2=No, 7/9=UnkNown)",
         'CIMEMLOS':  "지난 12개월 기억력 저하/혼란 여부 (예: 빈칸=null, 1=Yes, 2=No, 7/9=UnkNown)",
@@ -203,7 +205,7 @@ def main():
 
     # B) 범주형 숫자->문자 매핑
     category_maps = {
-    'GENHLTH': {1: 'Excellent', 2: 'VeryGood', 3: 'Good', 4: 'Fair', 5: 'Poor', 7: 'Unknown', 9: 'Unknown'},
+'GENHLTH': {1: 'Excellent', 2: 'VeryGood', 3: 'Good', 4: 'Fair', 5: 'Poor', 7: 'Unknown', 9: 'Unknown'},
 'PHYSHLTH': {**{i: str(i) for i in range(1, 31)}, 88: 'Zero', 77: 'Unknown', 99: 'Unknown'},
 'MENTHLTH': {**{i: str(i) for i in range(1, 31)}, 88: 'Zero', 77: 'Unknown', 99: 'Unknown'},
 'HLTHPLN1': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
@@ -349,18 +351,165 @@ def main():
 '_FRUITEX': {1: 'No', 2: 'Yes', 7: 'Unknown', 9: 'Unknown'},
 '_VEGETEX': {1: 'No', 2: 'Yes', 7: 'Unknown', 9: 'Unknown'},
 '_PACAT1': {1: 'VeryActive', 2: 'Active', 3: 'Insufficient', 4: 'Inactive', 9: 'Unknown'},
-'_AGEG5YR': {1: '18-24', 2: '25-29', 3: '30-34', 4: '35-39', 5: '40-44', 6: '45-49', 7: '50-54', 8: '55-59', 9: '60-64', 10: '65-69', 11: '70-74', 12: '75-79', 13: '80+'}\
+'_AGEG5YR': {1: '18-24', 2: '25-29', 3: '30-34', 4: '35-39', 5: '40-44', 6: '45-49', 7: '50-54', 8: '55-59', 9: '60-64', 10: '65-69', 11: '70-74', 12: '75-79', 13: '80+'},
+'PHYSHLTH': {**{i: str(i) for i in range(1, 31)}, 88: 'Zero', 77: 'Unknown', 99: 'Unknown'},
+'MENTHLTH': {**{i: str(i) for i in range(1, 31)}, 88: 'Zero', 77: 'Unknown', 99: 'Unknown'},
+'HLTHPLN1': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+'POORHLTH': {**{i: str(i) for i in range(1, 31)}, 88: 'Zero', 77: 'Unknown', 99: 'Unknown'},
+'PERSDOC2': {1: 'YesOne', 2: 'YesMulti', 3: 'No', 7: 'Unknown', 9: 'Unknown'},
+'MEDCOST': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'CHECKUP1': {1: 'Within1Y', 2: 'Within2Y', 3: 'Within5Y', 4: 'Over5Y', 7: 'Unknown', 8: 'Never', 9: 'Unknown'},
+    'BPMEDS': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'BLOODCHO': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'CHOLCHK': {1: 'Within1Y', 2:'Within2Y', 3:'Within5Y', 4:'Over5Y', 8:'Never', 7:'Unknown', 9:'Unknown', '':'Unknown'},
+    'TOLDHI2': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'CVDINFR4': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'ASTHMA3': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'ASTHNOW': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'CHCSCNCR': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'CHCOCNCR': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'CHCCOPD1': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'HAVARTH3': {1: 'Yes', 2: 'No', 7: 'Unknown',9: 'Unknown'},   
+    'ADDEPEV2': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'MARITAL': {1: 'Mar', 2: 'Div', 3: 'Wid', 4: 'Sep', 5: 'Nev', 6: 'UnP', 9: 'Unknown'},
+    'EDUCA': {1: 'None', 2: 'Elem', 3: 'MidHS', 4: 'HS', 5: 'SomeCol', 6: 'ColGrad', 9: 'Unknown'},
+    'RENTHOM1': {1: 'Own', 2: 'Rent', 3: 'Other', 7: 'Unknown', 9: 'Unknown'},
+    'VETERAN3': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'EMPLOY1': {1: 'Employed', 2: 'SelfEmp', 3: 'Unemp1Y+', 4: 'Unemp<1Y', 5: 'Homemaker', 6: 'Student', 7: 'Retired', 8: 'Unable', 9: 'Unknown'},
+    'INCOME2': {1: '<10K', 2: '10-15K', 3: '15-20K', 4: '20-25K', 5: '25-35K', 6: '35-50K', 7: '50-75K', 8: '75K+', 77: 'Unknown', 99: 'Unknown'},
+    'INTERNET': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'QLACTLM2': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'USEEQUIP': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'DECIDE': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'DIFFWALK': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'DIFFDRES': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'DIFFALON': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'SMOKE100': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'STOPSMK2': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'LASTSMK2': {1: 'Within1M', 2: 'Within3M', 3: 'Within6M', 4: 'Within1Y', 5: 'Within5Y', 6: 'Within10Y', 7: 'Y10plus', 8: 'Never', 9: 'Unknown', 99: 'Unknown'},
+    'USENOW3': {1: 'Daily', 2: 'Some', 3: 'Never', 7: 'Unknown', 9: 'Unknown'},
+    'LMTJOIN3': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'ARTHDIS2': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'ARTHDIS2': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'ARTHSOCL': {1: 'High', 2: 'Moderate', 3: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'JOINPAIN': {**{i: str(i) for i in range(0, 11)}, 77: 'Unknown', 99: 'Unknown'},
+    'FLUSHOT6': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'PNEUVAC3': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'HIVTST6': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'HIVTSTD3': {**{i: str(i) for i in range(11985, 122017)}, 777: 'Unknown', 999: 'Unknown'},
+    'WHRTST10': {1: 'Private', 2: 'Center', 3: 'Inpatient', 4: 'Clinic', 5: 'Prison', 6: 'DrugTx', 7: 'Home', 8: 'Other', 9: 'ER', 77: 'Unknown', 99: 'Unknown'},
+    'PDIABTST': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'PREDIAB1': {1: 'Yes', 2: 'Yes', 3: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'INSULIN': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'BLDSUGAR': {**{i: str(i) for i in range(0, 1000)}, 888: 'Zero', 999: 'Unknown'},
+    'FEETCHK2': {**{i: str(i) for i in range(0, 1000)}, 888: 'Zero', 999: 'Unknown'},
+    'DOCTDIAB': {**{i: str(i) for i in range(1, 77)}, 88: 'Zero', 77: 'Unknown', 99: 'Unknown'},
+    'CHKHEMO3': {**{i: str(i) for i in range(1, 77)}, 88: 'Zero', 77: 'Unknown', 98: 'Unknown', 99: 'Unknown'},
+    'FEETCHK':  {**{i: str(i) for i in range(1, 77)}, 88: 'Zero', 77: 'Unknown', 99: 'Unknown'},
+    'DIABEYE': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'CIMEMLOS': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'SXORIENT': {1: 'Hetero', 2: 'LG', 3: 'Bi', 4: 'Other', 9: 'Unknown'},
+    'TRNSGNDR': {1: 'Yes', 2: 'Yes', 3: 'Yes', 4: 'No',  9: 'Unknown'},
+    'MSCODE': {1: 'Central', 2: 'Fringe', 3: 'Suburban', 5: 'NonMSA'},
+    '_RFHLTH': {1: 'Yes', 2: 'No', 9: 'Unknown'},
+    '_HCVU651': {1: 'Yes', 2: 'No', 9: 'Unknown'},
+    '_CHOLCHK': {1: 'Yes', 2: 'No', 9: 'Unknown'},
+    '_RFCHOL': {1: 'No', 2: 'Yes', 9: 'Unknown'},
+    '_LTASTH1': {1: 'No', 2: 'Yes', 9: 'Unknown'},
+    '_CASTHM1': {1: 'No', 2: 'Yes', 9: 'Unknown'},
+    '_ASTHMS1': {1: 'Current', 2: 'Former', 3: 'Never', 9: 'Unknown'},
+    '_DRDXAR1': {1: 'Yes', 2: 'No', 9: 'Unknown'},
+    '_MRACE1': {1: 'White', 2: 'Black', 3: 'Native', 4: 'Asian', 5: 'Pacific', 6: 'Other', 7: 'Multi', 77: 'Unknown', 99: 'Unknown'},
+    '_HISPANC': {1: 'Yes', 2: 'No', 9: 'Unknown'},
+    '_RACE': {1: 'White', 2: 'Black', 3: 'Native', 4: 'Asian', 5: 'PacificI', 6: 'Other', 7: 'Multi', 8: 'Hispani', 9: 'Unknown'},
+    '_RACEG21': {1: 'Yes', 2: 'No', 9: 'Unknown'},
+    '_INCOMG': {1: '<15K', 2: '15-25K', 3: '25-35K', 4: '35-50K', 5: '50K+', 9: 'Unknown'},
+    'FC60_': {**{i: str(i) for i in range(0, 8591)}, 99900: 'Unknown'},
+    '_PASTAE1': {1: 'Yes', 2: 'No', 9: 'Unknown'},
+    '_FLSHOT6': {1: 'Yes', 2: 'No', 9: 'Unknown'},
+    '_PNEUMO2': {1: 'Yes', 2: 'No', 9: 'Unknown'},
+    '_AIDTST3': {1: 'Yes', 2: 'No', 9: 'Unknown'},
+    'EXRACT11': {'': 'NULL', 1: 'Active Gaming', 2: 'Aerobics', 3: 'Backpacking', 4: 'Badminton', 5: 'Basketball', 6: 'Stationary Bicycle', 7: 'Bicycling', 8: 'Canoeing/Kayaking', 9: 'Bowling', 10: 'Boxing', 11: 'Calisthenics', 12: 'Canoe Racing', 13: 'Carpentry', 14: 'Dancing', 15: 'Elliptical/EFX', 16: 'Fishing', 17: 'Frisbee', 18: 'Gardening', 19: 'Golf (cart)', 20: 'Golf (walking)', 21: 'Handball', 22: 'Hiking', 23: 'Hockey', 24: 'Horseback Riding', 25: 'Large Game Hunting', 26: 'Small Game Hunting', 27: 'Inline Skating', 28: 'Jogging', 29: 'Lacrosse', 30: 'Mountain Climbing', 31: 'Lawn Mowing', 32: 'Paddleball', 33: 'House Painting', 34: 'Pilates', 35: 'Racquetball', 36: 'Raking Leaves', 37: 'Running', 38: 'Rock Climbing', 39: 'Jump Rope', 40: 'Rowing Machine', 41: 'Rugby', 42: 'Scuba Diving', 43: 'Skateboarding', 44: 'Skating', 45: 'Sledding', 46: 'Snorkeling', 47: 'Snow Shoveling (machine)', 48: 'Snow Shoveling (manual)', 49: 'Skiing', 50: 'Snowshoeing', 51: 'Soccer', 52: 'Softball/Baseball', 53: 'Squash', 54: 'Stair Climbing', 55: 'Wading Fishing', 56: 'Surfing', 57: 'Swimming', 58: 'Lane Swimming', 59: 'Table Tennis', 60: 'Tai Chi', 61: 'Tennis', 62: 'Touch Football', 63: 'Volleyball', 64: 'Walking', 66: 'Water Skiing', 67: 'Weight Training', 68: 'Wrestling', 69: 'Yoga', 71: 'Caregiving Activities', 72: 'Farm/Ranch Work', 73: 'Household Activities', 74: 'Martial Arts/Karate', 75: 'Upper Body Ergometer', 76: 'Yard Work', 77: 'Unknown', 88: 'Zero', 98: 'Other', 99: 'Unknown'},
+    'EXEROFT1': {**{i: str(i) for i in range(0, 300)}, 777: 'Unknown', 999: 'Unknown'},
+    'EXERHMM1': {**{i: str(i) for i in range(0, 700)}, 777: 'Unknown', 888: 'Zero', 999: 'Unknown'},
+    'EXRACT21': {**{i: str(i) for i in range(0, 77)}, 77: 'Unknown', 88: 'Zero', 98: 'Other', 99: 'Unknown'},
+    'EXEROFT2': {**{i: str(i) for i in range(0, 300)}, 777: 'Unknown', 999: 'Unknown'},
+    'EXERHMM2': {**{i: str(i) for i in range(0, 700)}, 777: 'Unknown', 888: 'Zero', 999: 'Unknown'},
+    'DRNK3GE5': {**{i: str(i) for i in range(1, 77)}, 77: 'Unknown', 88: 'Zero', 99: 'Unknown'},
+    '_RFBING5': {1: 'No', 2: 'Yes', 7: 'Unknown', 9: 'Unknown'},
+    '_DRNKWEK': {**{i: str(i) for i in range(0, 99000)}, 99900: 'Unknown'},
+    '_RFDRHV5': {1: 'No', 2: 'Yes', 7: 'Unknown', 9: 'Unknown'},
+    'FTJUDA1_': {**{i: str(i) for i in range(0, 10000)}, '': 'Unknown'},
+    'FRUTDA1_': {**{i: str(i) for i in range(0, 10000)}, '': 'Unknown'},
+    'BEANDAY_': {**{i: str(i) for i in range(0, 10000)}, '': 'Unknown'},
+    'GRENDAY_': {**{i: str(i) for i in range(0, 10000)}, '': 'Unknown'},
+    'ORNGDAY_': {**{i: str(i) for i in range(0, 10000)}, '': 'Unknown'},
+    'VEGEDA1_': {**{i: str(i) for i in range(0, 10000)}, '': 'Unknown'},
+    '_FRUTSUM': {i: str(i) for i in range(0, 99999)},
+    '_VEGESUM': {i: str(i) for i in range(0, 99999)},
+    '_FRTLT1': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    '_VEGLT1': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'ACTIN11_': {0: 'Low', 1: 'Moderate', 2: 'Vigorous'},
+    'ACTIN21_': {0: 'Low', 1: 'Moderate', 2: 'Vigorous'},
+    'PADUR1_': {i: str(i) for i in range(0, 600)},
+    'PADUR2_': {i: str(i) for i in range(0, 600)},
+    'PAFREQ1_': {**{i: str(i) for i in range(0, 99000)}, 99000: 'Unknown'},
+    'PAFREQ2_': {**{i: str(i) for i in range(0, 99000)}, 99000: 'Unknown'},
+    '_MINAC11': {i: str(i) for i in range(0, 100000)},
+    '_MINAC21': {i: str(i) for i in range(0, 100000)},
+    'STRFREQ_': {**{i: str(i) for i in range(0, 99000)}, 99000: 'Unknown'},
+    'PAMIN11_': {i: str(i) for i in range(0, 100000)},
+    'PAMIN21_': {i: str(i) for i in range(0, 100000)},
+    'PAVIG11_': {i: str(i) for i in range(0, 100000)},
+    'PAVIG21_': {i: str(i) for i in range(0, 100000)},
+    '_PAINDX1': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    '_PA300R2': {1: '300plus', 2: '1to299', 3: 'None', 9: 'Unknown'},
+    '_PASTRNG': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    '_PAREC1': {1: 'BothMet', 2: 'AerobicOnly', 3: 'StrengthOnly', 4: 'Neither', 9: 'Unknown'},
+    '_BMI5CAT': {1:'Underweight', 2:'Normal', 3:'Overweight', 4:'Obese', '':'Unknown'},
+    '_PA150R2': {1: '150plus', 2: '1to149', 3: 'None', 9: 'Unknown'},
+    'BPHIGH4': {1: 'Yes', 2: 'Yes', '4': 'Yes', 3: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'CVDCRHD4': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'CVDSTRK3': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'CHCKIDNY': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'DIABETE3':  {1: 'Yes', 2: 'Yes', '4': 'Yes', 3: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'SEX': {1: 'male', 2: 'female'},
+    'PREGNANT': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'SMOKDAY2': {1: 'Daily', 2: 'Some', 3: 'Never', 7: 'Unknown', 9: 'Unknown'},
+    'ALCDAY5': {**{i: str(i) for i in range(1, 700)}, **{str(i): str(i % 100) for i in range(201, 300)}, 888: 'Zero', 777: 'Unknown', 999: 'Unknown'},
+    'AVEDRNK2': {**{str(i): str(i) for i in range(1, 77)}, 88: 'Zero', 77: 'Unknown', 99: 'Unknown'},
+    'MAXDRNKS': {**{str(i): str(i) for i in range(1, 77)}, 88: 'Zero', 77: 'Unknown', 99: 'Unknown'},
+    'FRUITJU1': {**{i: str(i) for i in range(1, 250)}, 300: 'Zero', 555: 'Zero', 777: 'Unknown', 999: 'Unknown'},
+    'FRUIT1': {**{i: str(i) for i in range(1, 250)}, 300: 'Zero', 555: 'Zero', 777: 'Unknown', 999: 'Unknown'},
+    'FVBEANS': {**{i: str(i) for i in range(1, 250)}, 300: 'Zero', 555: 'Zero', 777: 'Unknown', 999: 'Unknown'},
+    'FVGREEN': {**{i: str(i) for i in range(1, 250)}, 300: 'Zero', 555: 'Zero', 777: 'Unknown', 999: 'Unknown'},
+    'FVORANG': {**{i: str(i) for i in range(1, 250)}, 300: 'Zero', 555: 'Zero', 777: 'Unknown', 999: 'Unknown'},
+    'VEGETAB1': {**{i: str(i) for i in range(1, 250)}, 300: 'Zero', 555: 'Zero', 777: 'Unknown', 999: 'Unknown'},
+    'EXERANY2': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'STRENGTH': {**{i: str(i) for i in range(1, 700)}, 888: 'Zero', 777: 'Unknown', 999: 'Unknown'},
+    '_RFHYPE5': {1: 'No', 2: 'Yes', 7:'UnkNown', 9:'UnkNown'},
+    '_MICHD': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'HTM4': {i: str(i) for i in range(0, 1000)},
+    'WTKG3': {**{i: str(i) for i in range(2300, 29501)}, 99999: 'Unknown'},
+    '_BMI5': {**{i: str(i) for i in range(0, 10000)}, '': 'Unknown'},
+    '_SMOKER3': {1: 'Daily', 2: 'Some', 3: 'Former', 4: 'Never', 9: 'Unknown'},
+    'DRNKANY5': {1: 'Yes', 2: 'No', 7: 'Unknown', 9: 'Unknown'},
+    'DROCDY3_': {**{i: str(i) for i in range(0, 900)}, '900': 'Unknown'},
+    '_FRUITEX': {1: 'No', 2: 'Yes', 7: 'Unknown', 9: 'Unknown'},
+    '_VEGETEX': {1: 'No', 2: 'Yes', 7: 'Unknown', 9: 'Unknown'},
+    '_PACAT1': {1: 'VeryActive', 2: 'Active', 3: 'Insufficient', 4: 'Inactive', 9: 'Unknown'},
+    '_AGEG5YR': {1: '18-24', 2: '25-29', 3: '30-34', 4: '35-39', 5: '40-44', 6: '45-49', 7: '50-54', 8: '55-59', 9: '60-64', 10: '65-69', 11: '70-74', 12: '75-79', 13: '80+'}
 } 
 
-    # C) 특수값 매핑 규칙
-    special_value_maps = {
-        'PHYSHLTH': {88:0,77:-1,99:-1},
-        'MENTHLTH': {88:0,77:-1,99:-1},
-        'POORHLTH': {88:0,77:-1,99:-1},
-        # 예: _PA300R2 은 lambda로 처리
-        '_PA300R2': lambda x: 1 if x>=300 else 2 if x>=1 else 3 if x==0 else -1
-        # 나머지 숫자형 컬럼은 필요 시 dict 추가
-    }
+    # # C) 특수값 매핑 규칙
+    # special_value_maps = {
+    #     'PHYSHLTH': {88:0,77:-1,99:-1},
+    #     'MENTHLTH': {88:0,77:-1,99:-1},
+    #     'POORHLTH': {88:0,77:-1,99:-1},
+    #     # 예: _PA300R2 은 lambda로 처리
+    #     '_PA300R2': lambda x: 1 if x>=300 else 2 if x>=1 else 3 if x==0 else -1
+    #     # 나머지 숫자형 컬럼은 필요 시 dict 추가
+    # }
 
     # 범주형 카테고리 정보
     categorical_info = {}
@@ -387,8 +536,32 @@ def main():
     for col in feature_cols:
         desc = feature_desc.get(col, "설명 없음")
         prompt = f"- [{col}] {desc}\n  → "
-        val = input(prompt)
+        val = input(prompt).strip()
 
+    # ⚠️ "Unknown" 문자열 입력 → NaN 처리
+        if val.lower() in ['unknown', '모름', '응답거부', ''] or val in ['77', '99', 'NaN']:
+            num = pd.NA
+        else:
+            try:
+                num = int(val)
+            except:
+                num = pd.NA
+
+    # 사람이 볼 수 있는 label만 출력
+        if col in category_maps:
+            mapped_val = category_maps[col].get(num, 'Unknown')
+            print(f"  ↪️ 입력한 {num} 은 '{mapped_val}' 로 매핑됩니다.")
+
+    # # special_value_map 처리
+    #     if col in special_value_maps and num is not pd.NA:
+    #         rule = special_value_maps[col]
+    #         if callable(rule):
+    #             num = rule(num)
+    #         else:
+    #             num = rule.get(num, num)
+
+    # ⚠️ 숫자형이거나 NaN으로 저장
+        new_data[col] = num
         try:
             num = int(val)
         except:
@@ -412,7 +585,6 @@ def main():
 
 # DataFrame으로 변환
     new_df = pd.DataFrame([new_data])
-
 # 🟡 ⚠️ 반드시 encoder.transform() **삭제!!**
 # for col in obj_cols:
 #     new_df[col] = encoder.transform(new_df[col])
@@ -430,11 +602,31 @@ def main():
 
 
     # 예측 및 결과 출력
+# 🟡 ⚠️ 반드시 encoder.transform() **삭제!!**
+# for col in obj_cols:
+#     new_df[col] = encoder.transform(new_df[col])
+
+# 🟡 숫자형으로 강제 변환 (LightGBM은 숫자만 받음)
+    # 입력받은 new_data를 DataFrame으로 변환
+    new_df = pd.DataFrame([new_data])
+
+# 숫자형으로 강제 변환
+    for col in feature_cols:
+        try:
+            new_df[col] = pd.to_numeric(new_df[col])
+        except:
+            new_df[col] = pd.NA
+
+    #if new_df.isna().any().any():
+        #new_df = new_df.fillna(-1)
+
+# 예측 및 결과 출력
     probas_list = model.predict_proba(new_df)
     print("\n=== 예측 결과 ===")
     for idx, col in enumerate(target_cols):
         p = probas_list[idx][0][1] * 100
         print(f"[{col}] 양성 확률: {p:.2f}%")
+
 
 if __name__ == '__main__':
     main()
