@@ -4,7 +4,7 @@ import numpy as np
 #데이터형 전처리 방향 str로 변환 -> 숫자형 그대로 변환
 #-----------------------------------------------
 
-#yes가 1이고 no가 2임
+#yes가 1이고 no가 0임
 #---종속변수--
 def target01(df):
     cols = ['BPHIGH4', 'DIABETE3']
@@ -13,7 +13,7 @@ def target01(df):
         if value in [1, 2, 4]:
             return 1  # Yes
         elif value == 3:
-            return 2  # No
+            return 0  # No
         elif value in [7, 9]:
             return np.nan  # Unknown
 
@@ -32,7 +32,7 @@ def target02(df):
         if value == 1:
             return 1  # Yes
         elif value == 2:
-            return 2  # No
+            return 0  # No
         elif value in [7, 9]:
             return np.nan  # Unknown
 

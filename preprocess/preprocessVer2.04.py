@@ -16,5 +16,4 @@ df = df.drop(columns=columns_to_drop, errors='ignore')
 
 df = pd.read_csv("BRFSS_2015ver16.csv", low_memory=False)
 
-
 print("삭제 완료")
