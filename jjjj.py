@@ -27,8 +27,19 @@ def main():
         X, y, test_size=0.4, random_state=42, stratify=y['BPHIGH4']
     )
 
+    category_feature = ['GENHLTH', 'PERSDOC2', 'CHECKUP1', 'CHOLCHK', 'MARITAL', 'EDUCA',
+        'RENTHOM1', 'EMPLOY1', 'INCOME2', 'USENOW3', 'ARTHSOCL', 'WHRTST10',
+        'SXORIENT', '_ASTHMS1', '_MRACE1', '_RACE', '_INCOMG', 'ACTIN11_',
+        'ACTIN21_', '_PA300R2', '_PAREC1', '_BMI5CAT', '_PA150R2',
+        'SEX', 'SMOKDAY2', '_SMOKER3', '_PACAT1', '_AGEG5YR']
+    
+    X_train[category_feature] = X_train[category_feature].astype('category')
+    X_test[category_feature] = X_test[category_feature].astype('category')
+
     model = MultiOutputClassifier(LGBMClassifier(objective='binary', random_state=42), n_jobs=-1)
-    model.fit(X_train, y_train)
+    model.fit(X_train, y_train,
+                categorical_feature = category_feature)
+
 
     print("=== 최종 테스트 성능 ===")
     y_pred = model.predict(X_test)
@@ -236,6 +247,9 @@ def main():
     new_df = pd.DataFrame([new_data])
     if encoder and obj_cols:
         new_df[obj_cols] = encoder.transform(new_df[obj_cols].astype(str))
+    # 범주형 컬럼 지정 (학습 시 사용한 컬럼과 동일해야 함)
+    new_df[category_feature] = new_df[category_feature].astype('category')
+
 
     probas_list = model.predict_proba(new_df)
     print("\n=== 예측 결과 ===")
