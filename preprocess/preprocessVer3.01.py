@@ -739,7 +739,7 @@ def categorical(df):
         'RENTHOM1': [7, 9],
         'EMPLOY1': [9],
         'INCOME2': [77, 99],
-        'LASTSMK2': [9, 99],
+        'LASTSMK2': [77, 99],
         'USENOW3': [7, 9],
         'ARTHSOCL': [7, 9],
         'WHRTST10': [77, 99],
@@ -820,5 +820,10 @@ def preprocess_data(df):
 
 df = pd.read_csv("BRFSS_2015ver11.csv")
 df = preprocess_data(df)
-df.to_csv("BRFSS_2015ver17.csv", index=False)
+
+
+columns_to_drop = ['BLDSUGAR', 'FEETCHK2', 'FC60_', '_FRUITEX', '_VEGETEX']
+df.drop(columns=columns_to_drop, inplace=True)
+
+df.to_csv("BRFSS_2015ver18.csv", index=False)
 
