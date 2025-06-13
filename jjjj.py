@@ -31,7 +31,7 @@ def main():
         'RENTHOM1', 'EMPLOY1', 'INCOME2', 'USENOW3', 'ARTHSOCL', 'WHRTST10',
         'SXORIENT', '_ASTHMS1', '_MRACE1', '_RACE', '_INCOMG', 'ACTIN11_',
         'ACTIN21_', '_PA300R2', '_PAREC1', '_BMI5CAT', '_PA150R2',
-        'SEX', 'SMOKDAY2', '_SMOKER3', '_PACAT1', '_AGEG5YR']
+        'SEX', 'SMOKDAY2', '_SMOKER3', '_PACAT1', '_AGEG5YR', 'LASTSMK2', 'MSCODE']
     
     X_train[category_feature] = X_train[category_feature].astype('category')
     X_test[category_feature] = X_test[category_feature].astype('category')
