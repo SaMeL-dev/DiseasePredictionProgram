@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+import shap
+import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OrdinalEncoder
 from sklearn.multioutput import MultiOutputClassifier
@@ -13,7 +15,8 @@ def main():
     for col in target_cols:
         df = df[df[col].isin([0, 1])]
 
-    feature_cols = [c for c in df.columns if c not in target_cols]
+    # 말도 안되는 결과를 출력하는 6가지 컬럼 제외
+    feature_cols = [c for c in df.columns if c not in target_cols + ['BPMEDS', 'INSULIN', 'DOCTDIAB', 'CHKHEMO3', 'FEETCHK', 'DIABEYE']]
     X = df[feature_cols].copy()
     y = df[target_cols].astype(int)
 
@@ -32,6 +35,10 @@ def main():
         'SXORIENT', '_ASTHMS1', '_MRACE1', '_RACE', '_INCOMG', 'ACTIN11_',
         'ACTIN21_', '_PA300R2', '_PAREC1', '_BMI5CAT', '_PA150R2',
         'SEX', 'SMOKDAY2', '_SMOKER3', '_PACAT1', '_AGEG5YR', 'LASTSMK2', 'MSCODE']
+    
+    # 말도 안되는 결과를 출력하는 6가지 컬럼 제외
+    category_feature = [c for c in category_feature if c not in ['BPMEDS', 'INSULIN', 'DOCTDIAB', 'CHKHEMO3', 'FEETCHK', 'DIABEYE']]
+
     
     X_train[category_feature] = X_train[category_feature].astype('category')
     X_test[category_feature] = X_test[category_feature].astype('category')
@@ -277,6 +284,31 @@ def main():
             print(f"[{col}] 양성 확률: {prob:.2f}%")
         except Exception as e:
             print(f"[{col}] 예측 실패: {e}")
+
+
+    print("\n=== SHAP 분석 결과 ===")
+    for i, col in enumerate(target_cols):
+        try:
+            print(f"\n[{col}] SHAP 설명")
+
+            clf = model.estimators_[i]
+            explainer = shap.Explainer(clf)
+            shap_values = explainer(new_df)
+
+        # 시각화
+            shap.plots.waterfall(shap_values[0], max_display=10)
+
+        # SHAP 값을 CSV로 저장
+            shap_df = pd.DataFrame(shap_values.values[0], index=new_df.columns, columns=['shap_value'])
+            shap_df['abs_shap'] = shap_df['shap_value'].abs()
+            shap_df = shap_df.sort_values('abs_shap', ascending=False)
+            shap_df.to_csv(f"shap_values_{col}.csv", encoding='utf-8-sig')
+            print(f"[{col}] SHAP 값 저장 완료 → shap_values_{col}.csv")
+
+        except Exception as e:
+            print(f"[{col}] SHAP 실패: {e}")
+
+
 
 if __name__ == '__main__':
     main()
