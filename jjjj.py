@@ -7,7 +7,7 @@ from lightgbm import LGBMClassifier
 from sklearn.metrics import accuracy_score, classification_report
 
 def main():
-    df = pd.read_csv('data/BRFSS_2015ver17.csv', low_memory=False)
+    df = pd.read_csv('data/BRFSS_2015ver18.csv', low_memory=False)
     target_cols = ['BPHIGH4', 'CVDCRHD4', 'CVDSTRK3', 'CHCKIDNY', 'DIABETE3']
     df = df.dropna(subset=target_cols)
     for col in target_cols:
