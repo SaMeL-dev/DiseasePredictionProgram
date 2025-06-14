@@ -8,3 +8,5 @@ streamlit==1.44.1
 scipy==1.15.3
 threadpoolctl==3.6.0
 lightgbm==4.6.0
+shap==0.48.0
+matplotlib==3.10.3
